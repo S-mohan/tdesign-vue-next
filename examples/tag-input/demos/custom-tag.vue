@@ -5,7 +5,7 @@
       <template #tag="{ value }">
         <img
           src="https://tdesign.gtimg.com/site/avatar.jpg"
-          style="max-width: 20px; max-height: 20px; border-radius: 50%"
+          style="max-width: 16px; max-height: 16px; border-radius: 50%"
         />
         <span>&nbsp;&nbsp;{{ value }}</span>
       </template>
@@ -25,7 +25,7 @@
         >
           <img
             src="https://tdesign.gtimg.com/site/avatar.jpg"
-            style="max-width: 20px; max-height: 20px; border-radius: 50%"
+            style="max-width: 16px; max-height: 16px; border-radius: 50%"
           />
           <span>&nbsp;&nbsp;{{ item }}</span>
         </t-tag>

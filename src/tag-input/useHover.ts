@@ -1,7 +1,8 @@
-import { ref, toRefs } from 'vue';
+import { ref, toRefs, getCurrentInstance } from 'vue';
 import { TdTagInputProps } from './type';
 
-export default function useHover(props: TdTagInputProps) {
+export default function useHover() {
+  const props = getCurrentInstance().props as TdTagInputProps;
   const { disabled, readonly, onMouseenter, onMouseleave } = toRefs(props);
   const isHover = ref<boolean>(false);
 

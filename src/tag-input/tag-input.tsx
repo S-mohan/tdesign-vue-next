@@ -1,14 +1,22 @@
-import { defineComponent, ref, computed, toRefs, nextTick } from 'vue';
+import { defineComponent, ref, h, computed, toRefs, nextTick } from 'vue';
+
+// components
 import { CloseCircleFilledIcon } from 'tdesign-icons-vue-next';
-import { prefix } from '../config';
 import TInput, { InputValue } from '../input';
+import Tag from '../tag';
+
+// utils
 import { TdTagInputProps } from './type';
 import props from './props';
+import { prefix } from '../config';
 import { useTNodeJSX } from '../hooks/tnode';
+
+// hooks
 import useTagScroll from './useTagScroll';
 import useTagList from './useTagList';
 import useHover from './useHover';
 
+// constants class
 const NAME_CLASS = `${prefix}-tag-input`;
 const CLEAR_CLASS = `${prefix}-tag-input__suffix-clear`;
 const BREAK_LINE_CLASS = `${prefix}-tag-input--break-line`;
@@ -18,31 +26,27 @@ export default defineComponent({
 
   props: { ...props },
 
-  setup(props: TdTagInputProps, context) {
+  setup(props: TdTagInputProps) {
     const renderTNode = useTNodeJSX();
     const tInputValue = ref<InputValue>();
     const { excessTagsDisplayType, readonly, disabled, clearable, placeholder } = toRefs(props);
-    const { isHover, addHover, cancelHover } = useHover(props);
-    const { scrollToRight, onWheel, scrollToRightOnEnter, scrollToLeftOnLeave, tagInputRef } = useTagScroll(props);
+    const { isHover, addHover, cancelHover } = useHover();
+    const { scrollToRight, onWheel, scrollToRightOnEnter, scrollToLeftOnLeave, tagInputRef } = useTagScroll();
     // handle tag add and remove
-    const { tagValue, onInnerEnter, onInputBackspaceKeyUp, clearAll, renderLabel } = useTagList(props, context);
+    const { tagValue, onInnerEnter, onInputBackspaceKeyUp, clearAll, renderLabel } = useTagList();
 
-    const classes = computed(() => {
-      return [
-        NAME_CLASS,
-        {
-          [BREAK_LINE_CLASS]: excessTagsDisplayType.value === 'break-line',
-        },
-      ];
-    });
+    const classes = computed(() => [
+      NAME_CLASS,
+      {
+        [BREAK_LINE_CLASS]: excessTagsDisplayType.value === 'break-line',
+      },
+    ]);
 
-    const tagInputPlaceholder = computed(() => {
-      return isHover.value || !tagValue.value?.length ? placeholder.value : '';
-    });
+    const tagInputPlaceholder = computed(() => (isHover.value || !tagValue.value?.length ? placeholder.value : ''));
 
-    const showClearIcon = computed(() => {
-      return Boolean(!readonly.value && !disabled.value && clearable.value && isHover.value && tagValue.value?.length);
-    });
+    const showClearIcon = computed(() =>
+      Boolean(!readonly.value && !disabled.value && clearable.value && isHover.value && tagValue.value?.length),
+    );
 
     const onInputEnter = (value: InputValue, context: { e: KeyboardEvent }) => {
       tInputValue.value = '';
@@ -71,7 +75,6 @@ export default defineComponent({
       scrollToLeftOnLeave,
       classes,
       renderTNode,
-      slots: context.slots,
     };
   },
 
@@ -100,7 +103,7 @@ export default defineComponent({
         size={this.size}
         readonly={this.readonly}
         disabled={this.disabled}
-        label={() => this.renderLabel({ slots: this.slots, displayNode, label })}
+        label={() => this.renderLabel({ displayNode, label })}
         class={this.classes}
         tips={this.tips}
         status={this.status}

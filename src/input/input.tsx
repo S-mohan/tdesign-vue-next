@@ -144,7 +144,7 @@ export default defineComponent({
       this.onPaste?.({ e, pasteValue: clipData?.getData('text/plain') });
     },
     onHandleMousewheel(e: WheelEvent) {
-      this.onMousewheel?.({ e });
+      this.onwheel?.({ e });
     },
     emitPassword() {
       const { renderType } = this;
@@ -257,7 +257,7 @@ export default defineComponent({
         onMouseenter={this.onInputMouseenter}
         onMouseleave={this.onInputMouseleave}
         onwheel={this.onHandleMousewheel}
-        {...{ ...wrapperAttrs }}
+        {...wrapperAttrs}
       >
         {prefixIcon ? <span class={[`${name}__prefix`, `${name}__prefix-icon`]}>{prefixIcon}</span> : null}
         {labelContent}

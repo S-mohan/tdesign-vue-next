@@ -3,10 +3,11 @@
  * 如果标签过多时的处理方式，是标签省略，则不需要此功能
  */
 
-import { onMounted, onUnmounted, ref, toRefs } from 'vue';
+import { onMounted, onUnmounted, ref, toRefs, getCurrentInstance } from 'vue';
 import { TdTagInputProps } from './type';
 
-export default function useTagScroll(props: TdTagInputProps) {
+export default function useTagScroll() {
+  const { props }: { props: TdTagInputProps } = getCurrentInstance();
   const tagInputRef = ref();
   const { excessTagsDisplayType, readonly, disabled } = toRefs(props);
   // 允许向右滚动的最大距离

@@ -1,4 +1,4 @@
-import { ref, SetupContext, toRefs } from 'vue';
+import { ref, toRefs, getCurrentInstance } from 'vue';
 import { TagInputValue, TdTagInputProps, TagInputChangeContext } from './type';
 import { InputValue } from '../input';
 import Tag from '../tag';
@@ -9,13 +9,16 @@ import { useTNodeJSX } from '../hooks/tnode';
 export type ChangeParams = [TagInputChangeContext];
 
 // handle tag add and remove
-export default function useTagList(props: TdTagInputProps, context: SetupContext) {
+export default function useTagList() {
+  const instance = getCurrentInstance();
+  const props = instance.props as TdTagInputProps;
   const renderTnode = useTNodeJSX();
-  const { onRemove, max, minCollapsedNum, size, disabled, readonly, tagProps } = toRefs(props);
+
+  const { onRemove, max } = toRefs(props);
   // handle controlled property and uncontrolled property
   const [tagValue, setTagValue] = useDefault<TdTagInputProps['value'], TdTagInputProps>(
     props,
-    context.emit,
+    instance.emit,
     'value',
     'change',
   );
@@ -65,16 +68,10 @@ export default function useTagList(props: TdTagInputProps, context: SetupContext
     oldInputValue.value = value;
   };
 
-  const renderLabel = ({
-    slots,
-    displayNode,
-    label,
-  }: {
-    slots: SetupContext['slots'];
-    displayNode: any;
-    label: any;
-  }) => {
-    const newList = minCollapsedNum.value ? tagValue.value.slice(0, minCollapsedNum.value) : tagValue.value;
+  const renderLabel = ({ displayNode, label }: { displayNode: any; label: any }) => {
+    const { minCollapsedNum, size, disabled, tagProps, readonly } = props;
+
+    const newList = minCollapsedNum ? tagValue.value.slice(0, minCollapsedNum) : tagValue.value;
     const list = displayNode
       ? [displayNode]
       : newList?.map((item, index) => {
@@ -82,11 +79,11 @@ export default function useTagList(props: TdTagInputProps, context: SetupContext
           return (
             <Tag
               key={item}
-              size={size.value}
-              disabled={disabled.value}
+              size={size}
+              disabled={disabled}
               onClose={(context: { e: MouseEvent }) => onClose({ e: context.e, item, index })}
-              closable={!readonly.value && !disabled.value}
-              {...tagProps.value}
+              closable={!readonly && !disabled}
+              {...tagProps}
             >
               {tagContent ?? item}
             </Tag>
@@ -106,7 +103,7 @@ export default function useTagList(props: TdTagInputProps, context: SetupContext
         params: {
           value: tagValue,
           count: tagValue.value.length,
-          collapsedTags: tagValue.value.slice(minCollapsedNum.value, tagValue.value.length),
+          collapsedTags: tagValue.value.slice(minCollapsedNum, tagValue.value.length),
         },
       });
       list.push(more ?? <Tag key="more">+{len}</Tag>);
